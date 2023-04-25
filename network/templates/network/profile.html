@@ -1,0 +1,311 @@
+{% extends "network/layout.html" %} {% block body %} {% if userExists %}
+<div className="pb-4 border-bottom" id="userPostsDiv">
+  <!-- <div className="profile-thumbnail rounded-circle bg-secondary mt-3 mx-auto"></div>
+            <h4 className="text-center mt-2 ">{{ username }}</h4>
+            <p className="w-75 text-center mx-auto">Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati praesentium sapiente tempora, sunt a distinctio eaque mollitia architecto ad voluptate!</p>
+            <div className="d-flex justify-content-center w-75 mx-auto">
+                <p className="px-4 border-end">121 Followers</p>
+                <p className="px-4">201 Followings</p>
+            </div>
+            {% if profileOwner %}
+                <div className="d-flex justify-content-center">
+                    <button className="btn btn-outline-secondary mx-auto">Edit Profile</button>
+                </div>
+            {% else %}
+
+                {% if following %}
+                    <div className="d-flex justify-content-center">
+                        <button className="btn btn-outline-secondary mx-auto">Unfollow {{ username }}</button>
+                    </div>
+                {% else %}
+                    <div className="d-flex justify-content-center">
+                        <button className="btn btn-outline-secondary mx-auto">Follow {{ username }}</button>
+                    </div>
+                {% endif %}
+            {% endif %} -->
+</div>
+<!-- {{posts}} -->
+
+<!-- {{extras1}} -->
+{% else %}
+<div>
+  <div className="profile-thumbnail rounded-circle bg-secondary mt-3 mx-auto"></div>
+  <h4 className="text-center mt-2">This user does not exists.</h4>
+</div>
+
+{% endif %}
+
+<script type="text/babel">
+  const { useState } = React;
+  const { useEffect } = React;
+
+  // const FollowBtn = ({userdata, setuserdata}) => {
+
+  //     const [isFollowing, setIsFollowing] = useState(false);
+
+  //     const handleFollowClick = async(event) => {
+  //         event.preventDefault();
+  //         const response = await fetch(`/follow`, {
+  //             method: 'POST',
+  //             headers: {
+  //                 'Content-Type' : 'application/json'
+  //             },
+  //             body: JSON.stringify(userdata.username)
+  //         });
+  //         if(response.ok){
+  //             const json = await response.json();
+  //             const updatedFollowers = json.followed ? userdata.followers + 1 : userdata.followers - 1;
+  //             setuserdata({ ...userdata, followers: updatedFollowers, isfollowing: !isFollowing });
+  //             setIsFollowing(!isFollowing);
+  //         }
+  //     };
+
+  //     useEffect( () => {
+  //         setIsFollowing(userdata.isfollowing);
+  //         // console.log("fsd", isFollowing);
+  //     });
+
+  //     return(
+  //         <div className="d-flex justify-content-center">
+  //             <button className="btn btn-outline-secondary rounded-pill px-4 mx-auto" onClick={handleFollowClick}>{isFollowing ? "Unfollow" : "Follow"}</button>
+  //         </div>
+  //     )
+  // }
+
+  const UserStats = (isLoggedIn) => {
+    const [userdata, setuserdata] = useState({});
+    const [profileOwner, setProfileOwner] = useState(false);
+
+    const [url, setUrl] = useState("");
+    const [bio, setBio] = useState("");
+
+    // console.log("profff" ,profileOwner)
+
+    const getUserStats = async () => {
+      try {
+        const response = await fetch("/getuserstats/{{username}}");
+        const data = await response.json();
+
+        setuserdata(data.userStats);
+        setProfileOwner(data.profileOwner);
+      } catch (error) {
+        console.error("Error(getuserstats):", error);
+      }
+    };
+
+    useEffect(() => {
+      getUserStats();
+      console.log(userdata);
+    }, []);
+
+    useEffect(() => {
+      setBio(userdata.bio);
+      setUrl(userdata.image_url);
+    }, [userdata]);
+    
+
+    const addUserDetails = async () => {
+      const response = await fetch(`/adduserstat`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ image_url: url, bio: bio }),
+      });
+      const data = await response.json();
+      setuserdata(data.body);
+    };
+
+    const onUrlChange = (e) => {
+      setUrl(e.target.value);
+    };
+
+    const onBioChange = (e) => {
+      setBio(e.target.value);
+    };
+
+    // console.log("userdata", userdata);
+    // console.log("isLooge", isLoggedIn.isLoggedIn);
+
+    return (
+      <>
+        <div className="d-flex align-items-center mt-3">
+          <img className="profile-thumbnail rounded-circle bg-secondary" src={userdata.image_url}/>
+          {isLoggedIn.isLoggedIn && (
+            <div className="d-flex ms-3 justify-content-center">
+              {profileOwner ? (
+                <button
+                  className="btn btn-outline-secondary rounded-pill px-4 mx-auto"
+                  data-bs-toggle="modal"
+                  data-bs-target="#userStatModal"
+                >
+                  Edit Profile
+                </button>
+              ) : (
+                <FollowBtn userdata={userdata} setuserdata={setuserdata} />
+              )}
+            </div>
+          )}
+        </div>
+
+        <h4 className="mt-3">{userdata.username}</h4>
+        <p className="">
+          {userdata.bio}
+        </p>
+        <div className="d-flex">
+          <p className="pe-3 border-end">{userdata.followers} Followers</p>
+          <p className="px-3">{userdata.followings} Followings</p>
+        </div>
+
+        {profileOwner && (
+        <div
+          className="modal fade"
+          id="userStatModal"
+          tabIndex="-1"
+          aria-labelledby="exampleModalLabel"
+          aria-hidden="true"
+        >
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Edit Profile</h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div className="modal-body">
+                <div className="mb-3">
+                  <label htmlFor="profileImage" className="form-label">
+                    Profile Image URL
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="profileImage"
+                    value={url ? url : null}
+                    onChange={onUrlChange}
+                    required
+                  />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="bio" className="form-label">
+                    Bio
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="bio"
+                    value={bio ? bio : null}
+                    onChange={onBioChange}
+                    required
+                  />
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-outline-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Close
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={addUserDetails}
+                  data-bs-dismiss="modal"
+                >
+                  Save changes
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        )
+      }
+      </>
+    );
+  };
+
+  const UserProfile = () => {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [user, setUser] = useState("");
+
+    let usernameObj = "{{username}}";
+    console.log("uuuser", typeof usernameObj);
+
+    const getUser = async () => {
+      try {
+        const response = await fetch("/getuser");
+        const data = await response.json();
+
+        setIsLoggedIn(data.isLoggedIn);
+        setUser(data.user);
+
+        console.log("data- isloogged", isLoggedIn);
+        // isLoggedIn = data.isLoggedIn;
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+
+    useEffect(() => {
+      getUser();
+    }, []);
+
+    // console.log("posts", posts);
+    console.log("res", isLoggedIn);
+    console.log("The user is ", user);
+
+    return (
+      <>
+        <div className="container row mx-auto px-0">
+          <div className="col-8 left-side border-start border-end p-0">
+            <div
+              className="d-flex align-items-center py-3 px-3 mb-3 posttype-div sticky-top border-bottom"
+              id="heading-title"
+            >
+              <div className="d-flex align-items-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  className="bi bi-chevron-left"
+                  viewBox="0 0 16 16"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"
+                  />
+                </svg>
+                <p className="ms-2 m-0"></p>
+              </div>
+            </div>
+
+            <div className="">
+              <div className="px-3 pb-2 mb-4 border-bottom">
+                <UserStats isLoggedIn={isLoggedIn} />
+              </div>
+              <div className="px-3">
+                <PostsBody postType={usernameObj} page_no={1} />
+              </div>
+            </div>
+          </div>
+          <div className="col-4 right-side border-end profile-end-block">
+            <div className="position-sticky top-0">
+              <ProfileBlock post_id={null} />
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  };
+
+  ReactDOM.render(<UserProfile />, document.getElementById("userPostsDiv"));
+</script>
+
+{% endblock %}

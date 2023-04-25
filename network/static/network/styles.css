@@ -1,0 +1,255 @@
+:root {
+    --primary: #83c5be;
+    --secondary: #ffefef;
+    --postColor: #ffffff;
+    --postHover: #f7f7f8;
+    --border:#dfdfdf;
+    --white: #ffffff;
+    --bgColor: #f1faee;
+    --addPost: #457b9d;
+    --addPostInput :#7799ae;
+  }
+
+body{
+    background-color: var(--bgColor);
+    font-family: 'Prompt', sans-serif;
+
+}
+
+/* left/right div */
+.left-side, .right-side{
+    background-color: white;
+}
+
+@media only screen and (max-width: 740px) {
+    .left-side{
+        width: 100%;
+    }
+
+    .right-side{
+        display:none !important;
+    }
+}
+
+
+/* post */
+
+
+.addPostDiv{
+    width: 100% !important;
+    background-color: var(--addPost);
+    /* border: 1px solid var(--border); */
+}
+
+.addPostDiv input{
+    border-radius: 50rem;
+    border: none;
+    outline: none;
+}
+
+.addPostDiv input[type="text"]{
+    background-color: var(--addPostInput);
+    border: 1px solid transparent;
+}
+.addPostDiv input[type="text"]:focus{
+    border: 1px solid var(--primary);
+}
+
+
+.addPostDiv input[type="submit"]{
+    background-color: var(--primary);
+    /* border: 2px solid #ffef41; */
+    color: white;
+}
+
+.addPostDiv input[type="submit"]:disabled {
+    background-color: #b9dcd8;
+    cursor: not-allowed;
+}
+
+.addPostDiv .bg-inputs{
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+}
+
+.addPostExtraDiv{
+    background-color: #54768b;
+}
+
+.input-bg-light{
+    background-color: var(--white);
+}
+.input-bg-dark{
+    background-color: #2b2b2b;
+}
+
+.input-bg-light-gradient{
+    background: rgb(212,210,255);
+    background: linear-gradient(to right, #70e1f5, #ffd194);
+}
+
+.bg-selected{
+    color: inherit;
+    box-shadow: 0px 0px 0px 3px #294c61, 0px 0px 0px 5px #c3e7e3;
+}
+
+/* ------------- */
+
+.posttype-div{
+    background-color: rgb(255, 255, 255,0.5);
+    backdrop-filter: blur(24px);
+    /* backdrop-filter: opacity(0.5); */
+    /* opacity: 0.5; */
+}
+
+/* post-type div */
+.posttype-div h5{
+    font-size: 16px;
+    cursor: pointer;
+    color:gray;
+}
+
+
+.selected-postType{
+    color: black !important;
+}
+
+
+/* replied to div */
+.replied-to-div{
+    background-color: #b6ced7;
+}
+
+.delete-btn{
+    background-color: #c5c5c5;
+}
+
+.replied-to-div:hover{  
+    background-color: #80a8a4;
+}
+
+
+
+/* follow btn */
+.follow-btn{
+    height: fit-content;
+}
+
+
+
+
+/* postitem */
+
+.post-div-link{
+    text-decoration: none;
+}
+
+.post-div{
+    background-color: var(--postColor);
+    border: 1px solid var(--border);
+    cursor: pointer;
+}
+
+.post-div:hover{
+    background-color: var(--postHover);
+    
+}
+
+.post-body{
+    min-height: 200px;
+    padding: 16px;
+    border: 1px solid #e3e3e3;
+
+}
+
+
+.profile-thumbnail{
+    height: 80px;
+    width: 80px;
+}
+
+.post-profile-thumbnail{
+    height: 45px;
+    width: 45px;
+    min-width: 45px;
+}
+
+.post-profile-title a{
+    text-decoration: none;
+    color: black;
+}
+
+.post-profile-title a:hover{
+    text-decoration: underline;
+}
+
+/* .likeBtnBody{
+    width: max-content;
+    background-color: #eeeeee;
+} */
+
+.post-btn{
+    width: 38px;
+    height: 38px;
+    fill: #8b8b8b;
+    background-color: #eeeeee;
+    transition: 0.4s;
+    /* border: 1px solid #4a6ddf; */
+}
+
+.post-btn:hover{
+    background-color: #cdd8ff;
+}
+
+.post-btn:hover .bi{
+    fill: #4a6ddf;
+}
+
+.bi{
+    padding-top: 2px;
+}
+
+/* back-btn */
+.back-btn{
+    cursor: pointer;
+    color: gray;
+}
+.back-btn:hover{
+    color: black;
+}
+
+.auth-btn{
+    border-radius: 50rem;
+    border: 1px solid black;
+    text-decoration: none;
+    padding: 8px;
+    text-align: center;
+    cursor: pointer;
+    color: black;
+}
+
+.navbar-login-btn{
+    color: white;
+    border: 1px solid white;
+    padding: 8px 12px ;
+}
+
+
+/* login, signup screens */
+.auth-div{
+    width: 400px;
+    margin: 40px auto;
+    margin-bottom: 0px;
+    padding: 20px;
+    background-color: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+
+@media only screen and (max-width: 440px) {
+    .auth-div{
+        width: 96%;
+        margin-top: 12px;
+    }
+}

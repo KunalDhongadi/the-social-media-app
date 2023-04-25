@@ -1,0 +1,187 @@
+{% extends "network/layout.html" %} {% block body %}
+<div class="pb-4 border-bottom" id="user-post-div"></div>
+
+<script type="text/babel">
+  const { useState } = React;
+  const { useEffect } = React;
+
+  const AddReply = ({ replies, setReplies, parent }) => {
+    const [value, setValue] = useState("");
+
+    const handleSubmit = async (event) => {
+      event.preventDefault();
+      const response = await fetch(`/addpost`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ value: value, parent: parent }),
+      });
+      const json = await response.json();
+      let r = json.body;
+      setReplies((replies) => [r, ...replies]);
+      setValue("");
+    };
+
+    console.log("replies", replies);
+
+    const handleChange = (event) => {
+      setValue(event.target.value);
+    };
+
+    return (
+      <form
+        action="post"
+        className="p-3 py-4 addPostDiv"
+        onSubmit={handleSubmit}
+      >
+        <div className="d-flex container">
+          <input
+            type="text"
+            className="p-2 ps-3 flex-grow-1 me-2"
+            name="postbody"
+            value={value}
+            onChange={handleChange}
+            placeholder="Add a reply"
+            id="post-body"
+          />
+          <input
+            type="submit"
+            className="p-2 px-4"
+            value="Post"
+            id="newpost-btn"
+            disabled={value === ""}
+          />
+        </div>
+      </form>
+    );
+  };
+
+  const ReplyBody = ({ isLoggedIn, repliesObj, parent }) => {
+    const [replies, setReplies] = useState();
+
+    useEffect(() => {
+      setReplies(repliesObj);
+    }, [repliesObj]);
+
+    console.log("resfds", repliesObj);
+    console.log("reply mfosjd", replies);
+    return (
+      <>
+        {isLoggedIn && (
+          <AddPost posts={replies} setPosts={setReplies} parent={parent} />
+          // <AddReply replies={replies} setReplies={setReplies} parent={parent}/>
+        )}
+        <div className="container">
+          {replies &&
+            replies.map((reply) => {
+              return (
+                <div key={reply.id}>
+                  <PostItem
+                    post={reply}
+                    isLoggedIn={isLoggedIn}
+                    isOpened={false}
+                  />
+                </div>
+              );
+            })}
+        </div>
+      </>
+    );
+  };
+
+  const UserPostBody = () => {
+    const username = "{{ username }}";
+    const post_id = "{{ post_id }}";
+
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [post, setPost] = useState();
+    const [repliesObj, setRepliesObj] = useState();
+
+    const getPost = async () => {
+      try {
+        const response = await fetch(`/getuserpost/${username}/${post_id}`);
+        const data = await response.json();
+
+        const { post, isLoggedIn } = data;
+        setIsLoggedIn(isLoggedIn);
+        setPost(post);
+        setRepliesObj(post.replies);
+        console.log({ post, isLoggedIn });
+        console.log("PPOST MF", post.id);
+
+        // setPageData({ currentPage, hasNext, hasPrevious, totalPageCount });
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+
+    useEffect(() => {
+      getPost();
+    }, []);
+
+
+    const onBackClick = () => {
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        const { protocol, host } = window.location;
+        window.location.href = `${protocol}//${host}`;
+      }
+    }
+
+    console.log("the reply wtfii", repliesObj);
+
+    return (
+      <>
+        <div className="container row mx-auto px-0">
+          <div className="col-8 left-side border-start border-end p-0">
+            <div
+              className="d-flex align-items-center py-3 px-3 mb-3 posttype-div sticky-top border-bottom"
+              id="heading-title"
+            >
+              <div className="d-flex p-1 back-btn px-2 align-items-center" onClick={onBackClick}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  class="bi bi-chevron-left"
+                  viewBox="0 0 16 16"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"
+                  />
+                </svg>
+                <p className="ms-2 m-0">back</p>
+              </div>
+            </div>
+
+            <div class="px-3">
+              {post && (
+                <PostItem post={post} isLoggedIn={isLoggedIn} isOpened={true} />
+              )}
+
+              <ReplyBody
+                isLoggedIn={isLoggedIn}
+                repliesObj={repliesObj}
+                parent={post && post.id}
+              />
+            </div>
+          </div>
+
+          <div class="col-4 right-side border-end profile-end-block">
+            <div class="position-sticky top-0">
+              <ProfileBlock post_id={post_id}/>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  };
+
+  ReactDOM.render(<UserPostBody />, document.getElementById("user-post-div"));
+</script>
+
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+    <div class="container auth-div">
+
+        <h4 class="my-3">Login</h4>
+
+        {% if message %}
+            <div class="alert alert-secondary mb-2" role="alert">
+                {{message}}
+            </div>
+        {% endif %}
+
+        <form action="{% url 'login' %}" method="post">
+            {% csrf_token %}
+            <div class="form-group mb-2">
+                <input autofocus class="form-control" type="text" name="username" placeholder="Username">
+            </div>
+            <div class="form-group mb-2">
+                <input class="form-control" type="password" name="password" placeholder="Password">
+            </div>
+            <input class="auth-btn w-100 mb-2" type="submit" value="Login">
+        </form>
+
+        <p class="mt-2">Don't have an account? <a href="{% url 'register' %}">Sign up</a></p> 
+
+    </div>
+
+    <div class="auth-div mt-3">
+        <h5 class="my-3">Hate the commitment?</h5>
+        <button class="auth-btn w-100">Continue as Guest</button>
+    </div>
+
+{% endblock %}

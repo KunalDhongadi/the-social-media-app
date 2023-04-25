@@ -1,0 +1,25 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+    <div class="following-posts mx-auto" id="followingPage">
+        
+    </div>
+
+    <script type="text/babel">
+
+        const { useState } = React;
+        const { useEffect } = React;
+
+        const Following = () => {
+            return(
+                <PostsBody postType="following"/>
+            )
+        }
+
+        ReactDOM.render(<Following/>, document.getElementById('followingPage'));
+    </script>
+{% endblock %}
+
+
+
