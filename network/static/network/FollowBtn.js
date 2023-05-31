@@ -1,6 +1,7 @@
 const FollowBtn = ({userdata, setuserdata}) => {
      
     const [isFollowing, setIsFollowing] = useState(false);
+    const [followingText, setFollowingText] = useState("Following")
 
 
     const handleFollowClick = async(event) => {
@@ -25,9 +26,16 @@ const FollowBtn = ({userdata, setuserdata}) => {
         // console.log("fsd", isFollowing);
     });
 
+    const onmouseover= () =>{
+        setFollowingText("Unfollow")
+    }
+    const onmouseout= (e) =>{
+        setFollowingText("Following")
+    }
+
     return(
-        <div className="d-flex justify-content-center follow-btn">
-            <button className="btn btn-outline-secondary rounded-pill px-4 mx-auto" onClick={handleFollowClick}>{isFollowing ? "Unfollow" : "Follow"}</button>
+        <div className="d-flex justify-content-center follow-btn-div">
+            <button className="btn rounded-pill px-4 mx-auto follow-btn" onMouseOver={onmouseover} onMouseOut={onmouseout} onClick={handleFollowClick}>{isFollowing ? followingText : "Follow"}</button>
         </div>
     )
 }

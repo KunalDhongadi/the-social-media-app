@@ -1,5 +1,5 @@
 {% extends "network/layout.html" %} {% block body %}
-<div class="pb-4 border-bottom" id="user-post-div"></div>
+<div className="" id="user-post-div"></div>
 
 <script type="text/babel">
   const { useState } = React;
@@ -23,7 +23,7 @@
       setValue("");
     };
 
-    console.log("replies", replies);
+    // console.log("replies", replies);
 
     const handleChange = (event) => {
       setValue(event.target.value);
@@ -57,22 +57,37 @@
     );
   };
 
-  const ReplyBody = ({ isLoggedIn, repliesObj, parent }) => {
+  const ReplyBody = ({ isLoggedIn, repliesObj, parent, post, setPost, currentUser }) => {
     const [replies, setReplies] = useState();
 
+
     useEffect(() => {
-      setReplies(repliesObj);
+      if(repliesObj){
+        setReplies(repliesObj.reverse());
+      }
     }, [repliesObj]);
 
-    console.log("resfds", repliesObj);
-    console.log("reply mfosjd", replies);
+    useEffect(() => {
+      if(replies){
+        setPost(prevstate => ({...post,replyCount:replies.length}));
+      }
+      // console.log("replies changed");
+    }, [replies])
+
+
+    // console.log("resfds", replies);
+    // console.log("parent post mfosjd", post);
     return (
       <>
         {isLoggedIn && (
           <AddPost posts={replies} setPosts={setReplies} parent={parent} />
           // <AddReply replies={replies} setReplies={setReplies} parent={parent}/>
         )}
-        <div className="container">
+        {replies && replies.length > 0 &&
+        <h5 className="my-4 fs-6">Post replies</h5>
+        }
+
+        <div className="">
           {replies &&
             replies.map((reply) => {
               return (
@@ -81,6 +96,9 @@
                     post={reply}
                     isLoggedIn={isLoggedIn}
                     isOpened={false}
+                    currentUser={currentUser}
+                    posts={replies}
+                    setPosts={setReplies}
                   />
                 </div>
               );
@@ -95,20 +113,26 @@
     const post_id = "{{ post_id }}";
 
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [post, setPost] = useState();
+    const [postObj, setPostObj] = useState();
+    const [postExists, setPostExists] = useState(false);
     const [repliesObj, setRepliesObj] = useState();
+    const [currentuser, setcurrentuser] = useState();
 
     const getPost = async () => {
       try {
         const response = await fetch(`/getuserpost/${username}/${post_id}`);
         const data = await response.json();
 
-        const { post, isLoggedIn } = data;
+        const { post, isLoggedIn, currentUser } = data;
         setIsLoggedIn(isLoggedIn);
-        setPost(post);
+        if(Object.keys(post).length > 0){
+          setPostExists(true);
+        }
+        setPostObj(post);
         setRepliesObj(post.replies);
-        console.log({ post, isLoggedIn });
-        console.log("PPOST MF", post.id);
+        setcurrentuser(currentUser)
+        // console.log({ post, isLoggedIn });
+        // console.log("PPOST MF", post.id);
 
         // setPageData({ currentPage, hasNext, hasPrevious, totalPageCount });
       } catch (error) {
@@ -130,14 +154,14 @@
       }
     }
 
-    console.log("the reply wtfii", repliesObj);
+    // console.log("the reply wtfii", repliesObj);
 
     return (
       <>
-        <div className="container row mx-auto px-0">
-          <div className="col-8 left-side border-start border-end p-0">
+        <div className="container px-xxl-5 main-block row mx-auto">
+          <div className="col-8 left-side  p-0">
             <div
-              className="d-flex align-items-center py-3 px-3 mb-3 posttype-div sticky-top border-bottom"
+              className="d-flex align-items-center py-3 px-3 mb-3 posttype-div sticky-top"
               id="heading-title"
             >
               <div className="d-flex p-1 back-btn px-2 align-items-center" onClick={onBackClick}>
@@ -146,11 +170,11 @@
                   width="16"
                   height="16"
                   fill="currentColor"
-                  class="bi bi-chevron-left"
+                  className="bi bi-chevron-left"
                   viewBox="0 0 16 16"
                 >
                   <path
-                    fill-rule="evenodd"
+                    fillRule="evenodd"
                     d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"
                   />
                 </svg>
@@ -158,22 +182,43 @@
               </div>
             </div>
 
-            <div class="px-3">
-              {post && (
-                <PostItem post={post} isLoggedIn={isLoggedIn} isOpened={true} />
-              )}
+            <div className="px-3">
+              {postObj && postExists ?
+                (
+                <PostItem post={postObj} isLoggedIn={isLoggedIn} isOpened={true} currentUser={currentuser}/>
+              )
+              :
+              <h4 className="fs-6 my-4">The post does not exist.</h4>
+              }
 
+ 
+              {postExists && 
               <ReplyBody
                 isLoggedIn={isLoggedIn}
                 repliesObj={repliesObj}
-                parent={post && post.id}
+                parent={postObj && postObj.id}
+                currentUser={currentuser}
+                post={postObj}
+                setPost={setPostObj}
               />
+            }
             </div>
           </div>
 
-          <div class="col-4 right-side border-end profile-end-block">
-            <div class="position-sticky top-0">
-              <ProfileBlock post_id={post_id}/>
+          <div className="px-3 col-4 right-side profile-end-block">
+            <div className="position-sticky top-0">
+              {isLoggedIn && postExists ? <ProfileBlock post_id={post_id}/>
+              :
+              <div className="pt-4">
+                <h5>You're missing out!</h5>
+                <p>Signup or login to follow the people you like.</p>
+
+                <a className="auth-btn d-block" href="/signup">Signup</a>
+                <a className="auth-btn d-block mt-2" href="/login">Login</a>
+                <p className="text-center m-0">or</p>
+                <a className="auth-btn d-block mt-2" href="{% url 'guestLogin' %}">Continue as Guest</a>
+              </div>
+            }
             </div>
           </div>
         </div>
@@ -181,7 +226,8 @@
     );
   };
 
-  ReactDOM.render(<UserPostBody />, document.getElementById("user-post-div"));
+  const root = ReactDOM.createRoot(document.getElementById("user-post-div"));
+  root.render(<UserPostBody />);
 </script>
 
 {% endblock %}

@@ -1,5 +1,5 @@
 {% extends "network/layout.html" %} {% load static %} {% block body %}
-<div class="all-posts mx-auto" id="homePage"></div>
+<div className="all-posts mx-auto" id="homePage"></div>
 
 <script type="text/babel">
   const { useState } = React;
@@ -14,51 +14,71 @@
     }else{
       isLoggedIn = true;
     }
-    console.log("fdsf", isLoggedIn);
+    // console.log("fdsf", isLoggedIn);
     
-    const onPostTypeChange = () => {
-      setIsAll(!isAll);
+    const onAllPostsSelected = () => {
+      if(isAll){
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth"
+        });
+      }else{
+        setIsAll(true);
+      }
     };
+
+    const onFollowingPostsSelected = () => {
+      if(!isAll){
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth"
+        });
+      }else{
+        setIsAll(false);
+      }
+    }
     return (
       <>
-        <div className="container row mx-auto px-0">
-          <div className="col-8 left-side border-start border-end p-0">
+        <div className="container px-xxl-5 main-block row mx-auto">
+          <div className="col-8 left-side p-0">
             <div
-              className="d-flex align-items-center py-3 px-3 posttype-div sticky-top border-bottom"
+              className="d-flex align-items-center py-3 px-3 posttype-div sticky-top"
               id="heading-title"
             >
               <h5
                 className={`m-0 px-3 p-2 ${isAll && "selected-postType"}`}
-                onClick={onPostTypeChange}
+                onClick={onAllPostsSelected}
               >
                 All posts
               </h5>
               {isLoggedIn && 
               <h5
                 className={`m-0 px-3 p-2 ms-2 ${!isAll && "selected-postType"}`}
-                onClick={onPostTypeChange}
+                onClick={onFollowingPostsSelected}
               >
                 Following
               </h5>
               }
             </div>
 
-            <div class="px-3">
-              <PostsBody postType={isAll ? "all" : "following"} page_no={1} />
+            <div className="px-3 pt-3">
+              <PostsBody postType={isAll ? "all" : "following"} page_no={0} />
             </div>
           </div>
 
           
-          <div class="col-4 right-side border-end profile-end-block">
-            <div class="position-sticky bottom-0">
+          <div className="col-4 px-3 right-side profile-end-block">
+            <div className="position-sticky top-0">
               {isLoggedIn ? <ProfileBlock post_id={null}/>
               :
               <div className="pt-4">
-                <h5>You're missing out</h5>
+                <h5>You're missing out!</h5>
                 <p>Signup or login to follow the people you like.</p>  
 
-                <a class="auth-btn d-block">Signup</a>
-                <a class="auth-btn d-block mt-2">Login</a>
+                <a className="auth-btn d-block" href="/signup">Signup</a>
+                <a className="auth-btn d-block mt-2" href="/login">Login</a>
+                <p className="text-center m-0">or</p>
+                <a className="auth-btn d-block mt-2" href="{% url 'guestLogin' %}">Continue as Guest</a>
               </div>
             }
             </div>
@@ -67,7 +87,8 @@
       </>
     );
   };
-
-  ReactDOM.render(<Home />, document.getElementById("homePage"));
+  
+  const root = ReactDOM.createRoot(document.getElementById("homePage"));
+  root.render(<Home />);
 </script>
 {% endblock %}

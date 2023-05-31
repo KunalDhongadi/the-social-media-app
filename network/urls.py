@@ -8,15 +8,17 @@ urlpatterns = [
     path("login", views.login_view, name="login"),
     path("logout", views.logout_view, name="logout"),
     path("signup", views.register, name="register"),
+    path("guestlogin", views.guest_login, name="guestLogin"),
 
 
     # API routes
     path("getuser", views.getUser, name="getUser"),
+
     path("addpost", views.addPost, name="addPost"),
     path("getposts", views.getPosts, name="getPosts"),
     path("getsuggested", views.getSuggestedUsers, name="getSuggestedUsers"),
     path("getrelevant", views.getRelevantUsers, name="getRelevantUsers"),
-    # path("getposts/<type>", views.getPosts, name="getPosts"),
+
     path("getuserstats/<user>", views.getUserStats, name="getUserStats"),
     path("getuserpost/<username>/<post_id>", views.getUserPost, name="getUserPost"),
     path("adduserstat", views.addUserStat, name="addUserState"),

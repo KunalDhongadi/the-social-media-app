@@ -68,7 +68,7 @@ def getPosts(request):
 def getSuggestedUsers(request):
     not_following_users = UserStat.objects.exclude(
     Q(user=request.user) | Q(followers=request.user)
-    ).distinct()
+    ).distinct()[0:3]
 
     allUsers = [user.serialize(request.user) for user in not_following_users]
 
@@ -94,13 +94,19 @@ def getRelevantUsers(request):
     userStatObj = UserStat.objects.get(user = userObj)
     relevantUsers.append(userStatObj.serialize())
 
-    if(postObj.get("replies")):
-        for reply in postObj.get("replies"):
-            if(reply.get("postOwner") == postOwner):
-                continue
-            userObj = User.objects.get(username = reply.get("postOwner"))
-            userStatObj = UserStat.objects.get(user = userObj)
-            relevantUsers.append(userStatObj.serialize(request.user))
+    if(postObj.get("replied_to")):
+
+        repliedToUser = User.objects.get(username= postObj.get("replied_to").get("postOwner"))
+        repliedUserStat = UserStat.objects.get(user=repliedToUser)
+        relevantUsers.append(repliedUserStat.serialize(request.user))
+
+
+        # for reply in postObj.get("replies"):
+        #     if(reply.get("postOwner") == postOwner):
+        #         continue
+        #     userObj = User.objects.get(username = reply.get("postOwner"))
+        #     userStatObj = UserStat.objects.get(user = userObj)
+        #     relevantUsers.append(userStatObj.serialize(request.user))
 
 
     return JsonResponse({'users': relevantUsers})
@@ -110,30 +116,30 @@ def getRelevantUsers(request):
 
 
 def getUserPost(request,username, post_id):
-    profileOwner = False
     currentUser = request.user
     user_obj = User.objects.get(username=username)
 
     if not user_obj:
         return JsonResponse({"error" : "User does not exists"}, safe=False)
     
-    if currentUser == user_obj:
-        profileOwner = True
 
-    post = Post.objects.get(id=post_id)
+    try:
+        post = Post.objects.get(id=post_id)
+
+        if request.user.is_authenticated:
+            post = post.serialize(request.user)
+        else:
+            post = post.serialize()
+    except Post.DoesNotExist:
+        post = {}
+
     # post = list(post.values())
     # print(post.serialize())
-
-    if request.user.is_authenticated:
-        post = post.serialize(request.user)
-    else:
-        post = post.serialize()
     
-
     data = {
         "post" : post,
         "isLoggedIn" : request.user.is_authenticated,
-        "profileOwner" : profileOwner
+        "currentUser" : currentUser.username
     }
     return JsonResponse(data, safe=False)
 
@@ -153,12 +159,14 @@ def getUser(request):
 def getUserStats(request, user):
     profileOwner = False
     currentUser = request.user
-    user_obj = User.objects.get(username=user)
+    try:
+        user_obj = User.objects.get(username=user)
+    except User.DoesNotExist:
+         return JsonResponse({"error" : "User does not exists"}, safe=False)
+
     # print("---------------------")
     # print(UserStat.objects.filter(user=user_obj).exists())
     # print("------------")
-    if not user_obj:
-        return JsonResponse({"error" : "User does not exists"}, safe=False)
     
     if currentUser == user_obj:
         profileOwner = True
@@ -313,13 +321,9 @@ def profile(request, username):
     userExists = False
     try:
         searchedUser = User.objects.get(username=username)
+        userExists = True
     except User.DoesNotExist:
-        return render(request, "network/profile.html", {
-            "userExists" : userExists
-        })
-
-    userExists = True
-         
+        pass
     return render(request, "network/profile.html", {
         "username" : username,
         "userExists" : userExists
@@ -334,11 +338,18 @@ def userPost(request, username, post_id):
 
 
 
-    
-
+def guest_login(request):
+    user = authenticate(request, username="jon", password="jon123")
+    if user is not None:
+        login(request, user)
+        return HttpResponseRedirect(reverse("index"))
 
 
 def login_view(request):
+
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(reverse('index'))
+
     if request.method == "POST":
 
         # Attempt to sign user in
@@ -356,7 +367,7 @@ def login_view(request):
             })
     else:
         return render(request, "network/login.html")
-
+    
 
 
 def logout_view(request):
@@ -365,9 +376,18 @@ def logout_view(request):
 
 
 def register(request):
+
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(reverse('index'))
+    
     if request.method == "POST":
         username = request.POST["username"]
         email = request.POST["email"]
+
+        if username=="login" or username=="signup" or username=="posts" or username=="logout":
+            return render(request, "network/register.html", {
+                "message": "Please enter valid username."
+            })
 
         # Ensure password matches confirmation
         password = request.POST["password"]

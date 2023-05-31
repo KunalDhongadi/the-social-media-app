@@ -1,33 +1,122 @@
 :root {
-    --primary: #83c5be;
+    --primary: #6b8d74;
+    --secondary: #f5fff8;
+    --accent:#d3ddd5;
+    --postColor: #ffffff;
+    --postHover: #f7f7f8;
+    --border:#919b92;
+    --white: #ffffff;
+    --bgColor: #e7f0e8;
+    --bgSecondary : #e7f0e8;
+    --grayColor: #f4f4f4;
+    --addPost: #F6FAF6;
+    --addPostInput :#f9958d;
+    --darkPrimary : #272727;
+
+  }
+
+  /* :root {
+    --primary: #F07D75;
     --secondary: #ffefef;
     --postColor: #ffffff;
     --postHover: #f7f7f8;
     --border:#dfdfdf;
     --white: #ffffff;
-    --bgColor: #f1faee;
-    --addPost: #457b9d;
-    --addPostInput :#7799ae;
-  }
+    --bgColor: #f0ebe9;
+    --bgSecondary : #f9f9f9;
+    --grayColor: rgb(225, 225, 225);
+    --addPost: #ffe7e1;
+    --addPostInput :#f9958d;
+    --darkPrimary : #272727;
+
+  } */
 
 body{
     background-color: var(--bgColor);
     font-family: 'Prompt', sans-serif;
+}
 
+.border-e{
+    border-right: 1px solid var(--border) !important;
+}
+
+.border-b{
+    border-bottom: 1px solid var(--border) !important;
+}
+
+.navbar-brand:hover{
+    color: var(--border) !important;
+    transition: 0.4s;
+}
+
+.the-navbar{
+    background-color: var(--darkPrimary) !important;
+    color: white !important;
+}
+
+.navbar-avatar{
+    background-color: #2b2b2b;
+}
+
+.navbar-avatar:hover{
+    color: var(--border);
+}
+
+.the-modal p{
+    color: black;
+}
+
+.the-modal p:first-child{
+    color: #9f9f9f;
+    font-size: 14px;
+}
+
+.the-modal a{
+    text-decoration: none;
+    color: gray;
+}
+
+.the-modal a:hover{
+    color: black;
+}
+
+.main-block{
+    min-height: 90vh;
+    z-index: 2000;
 }
 
 /* left/right div */
-.left-side, .right-side{
-    background-color: white;
+
+.left-side{
+    position: relative;
+    border-left: 1px solid var(--border);
+    /* border-right: 1px solid var(--border); */
+    background-color: var(--bgSecondary);
 }
 
-@media only screen and (max-width: 740px) {
+.right-side{
+    border-left: 1px solid var(--border);
+    z-index: 100;
+}
+
+@media only screen and (max-width: 770px) {
     .left-side{
         width: 100%;
+        border-right: 1px solid var(--border);
+        /* border: none; */
     }
 
     .right-side{
         display:none !important;
+    }
+}
+
+@media only screen and (max-width: 500px) {
+    .main-block{
+        padding: 0px;
+    }
+    .left-side{
+        border: none;
     }
 }
 
@@ -37,8 +126,8 @@ body{
 
 .addPostDiv{
     width: 100% !important;
-    background-color: var(--addPost);
-    /* border: 1px solid var(--border); */
+    background-color: var(--white);
+    border: 1px solid var(--border);
 }
 
 .addPostDiv input{
@@ -47,12 +136,17 @@ body{
     outline: none;
 }
 
-.addPostDiv input[type="text"]{
-    background-color: var(--addPostInput);
-    border: 1px solid transparent;
+.addPostDiv textarea{
+    background-color: transparent;
+    border: none;
+    outline: none;
+    resize: none;
+    height: 40px;
+
 }
-.addPostDiv input[type="text"]:focus{
-    border: 1px solid var(--primary);
+
+.addPostDiv textarea::placeholder{
+    color: var(--border)
 }
 
 
@@ -60,21 +154,24 @@ body{
     background-color: var(--primary);
     /* border: 2px solid #ffef41; */
     color: white;
+    height: fit-content;
 }
 
 .addPostDiv input[type="submit"]:disabled {
-    background-color: #b9dcd8;
+    background-color: #9ab09f;
     cursor: not-allowed;
 }
 
 .addPostDiv .bg-inputs{
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     cursor: pointer;
+    border: 1px solid var(--border);
 }
 
+
 .addPostExtraDiv{
-    background-color: #54768b;
+    border-top: 1px solid var(--border);
 }
 
 .input-bg-light{
@@ -91,14 +188,19 @@ body{
 
 .bg-selected{
     color: inherit;
-    box-shadow: 0px 0px 0px 3px #294c61, 0px 0px 0px 5px #c3e7e3;
+    box-shadow: 0px 0px 0px 3px var(--addPost), 0px 0px 0px 5px var(--primary);
 }
+
 
 /* ------------- */
 
 .posttype-div{
-    background-color: rgb(255, 255, 255,0.5);
-    backdrop-filter: blur(24px);
+    /* background-color: #E4EBE5b9; */
+    /* backdrop-filter: blur(24px); */
+    background-color: var(--bgSecondary);
+    border-bottom: 1px solid var(--border);
+    z-index: 1;
+    /* border-right: 1px solid red; */
     /* backdrop-filter: opacity(0.5); */
     /* opacity: 0.5; */
 }
@@ -112,34 +214,92 @@ body{
 
 
 .selected-postType{
-    color: black !important;
+    color: var(--darkPrimary) !important;
+    border-radius: 50rem;
+    border: 1px solid var(--border);
 }
-
+/* .selected-postType::after{
+    content: '_';
+    display: block;
+    text-align: center;
+    font-size: 36px;
+    line-height: 0;
+    color: #F07D75;
+} */
 
 /* replied to div */
 .replied-to-div{
-    background-color: #b6ced7;
+    background-color: var(--grayColor);
+    border: 1px solid transparent;
+    cursor: pointer;
 }
 
 .delete-btn{
-    background-color: #c5c5c5;
+    font-size: 14px;
+    background-color: var(--grayColor);
+    cursor: pointer;
+    border: 1px solid transparent;
+}
+
+.delete-btn:hover{
+    border: 1px solid var(--border);
 }
 
 .replied-to-div:hover{  
-    background-color: #80a8a4;
+    border: 1px solid var(--border);
+}
+
+
+.followsback-div{
+    /* background-color: var(--secondary); */
+    border: 1px solid var(--border);
+    padding: 4px 12px;
+    border-radius: 50rem;
+    color: var(--primary);
+    font-size: 12px;
 }
 
 
 
-/* follow btn */
-.follow-btn{
-    height: fit-content;
-}
 
 
 
 
 /* postitem */
+@keyframes slide-in-left {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes appear {
+    0% {
+      opacity: 0.2;
+    }
+    50%{
+        opacity: 0.6;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+
+@keyframes like{
+    0%{
+        width: 30%;
+    }
+    50%{
+        width: 20%;
+    }
+    100%{
+        width: 100%;
+    }
+}
+
 
 .post-div-link{
     text-decoration: none;
@@ -149,17 +309,30 @@ body{
     background-color: var(--postColor);
     border: 1px solid var(--border);
     cursor: pointer;
+    animation-name: slide-in-left;
+    animation-direction: reverse;
+    animation-duration: 0.4s;
+    animation-fill-mode: forwards;
+    animation-play-state: paused;
 }
 
 .post-div:hover{
-    background-color: var(--postHover);
-    
+    box-shadow: rgba(125, 125, 125, 0.16) 0px 1px 4px;
+}
+
+.post-page{
+    cursor: auto;
+}
+.post-page:hover{
+    box-shadow: none;
 }
 
 .post-body{
     min-height: 200px;
     padding: 16px;
     border: 1px solid #e3e3e3;
+    animation-name: appear;
+    animation-duration: 1s;
 
 }
 
@@ -167,21 +340,27 @@ body{
 .profile-thumbnail{
     height: 80px;
     width: 80px;
+    border: 1px solid var(--border);
 }
 
 .post-profile-thumbnail{
     height: 45px;
     width: 45px;
     min-width: 45px;
+    border: 1px solid var(--border);
 }
 
 .post-profile-title a{
     text-decoration: none;
     color: black;
+    font-weight: 500;
 }
 
 .post-profile-title a:hover{
     text-decoration: underline;
+    text-decoration-color: var(--primary);
+    color:var(--primary);
+
 }
 
 /* .likeBtnBody{
@@ -193,21 +372,46 @@ body{
     width: 38px;
     height: 38px;
     fill: #8b8b8b;
-    background-color: #eeeeee;
+    background-color: var(--grayColor);
     transition: 0.4s;
+    cursor: pointer;
     /* border: 1px solid #4a6ddf; */
 }
 
 .post-btn:hover{
-    background-color: #cdd8ff;
+    background-color: var(--grayColor);
 }
 
 .post-btn:hover .bi{
-    fill: #4a6ddf;
+    fill: #bf5b5b;
+    scale: 1.2;
+    transition: 0.4s;
 }
 
-.bi{
-    padding-top: 2px;
+/* like btn */
+.liked-btn{
+    color: #bf5b5b;
+    animation-name: like;
+    animation-duration: 0.3s;
+}
+
+
+/* follow btn */
+.follow-btn-div{
+    height: fit-content;
+}
+
+.follow-btn{
+    /* background-color: #ffd3d0; */
+    width: 120px;
+    color: var(--darkPrimary);
+    border: 1px solid var(--border);
+}
+
+.follow-btn:hover{
+    background-color: var(--darkPrimary);
+    color: white;
+    transition: 0.4s;
 }
 
 /* back-btn */
@@ -219,22 +423,50 @@ body{
     color: black;
 }
 
-.auth-btn{
+.auth-btn, .the-btn{
     border-radius: 50rem;
-    border: 1px solid black;
+    border: none;
     text-decoration: none;
     padding: 8px;
     text-align: center;
     cursor: pointer;
-    color: black;
+    color: var(--white);
+    background-color: var(--primary);
+}
+
+.auth-btn:hover, .the-btn:hover{
+    /* background-color: #bf5b5b; */
+    color: var(--white);
+    transition: 0.4s;
+    /* border: 1px solid var(--primary); */
+}
+
+
+#userStatModal button:first-child{
+    background-color: var(--accent);
+    color: var(--primary);
 }
 
 .navbar-login-btn{
     color: white;
-    border: 1px solid white;
-    padding: 8px 12px ;
+    background-color: #2b2b2b;
+    border-radius: 50rem;
+    border: 1px solid var(--border);
+    padding: 6px 12px ;
+    text-decoration: none;
 }
 
+.navbar-login-btn:hover{
+    background-color: #2b2b2b;
+    border: 1px solid var(--primary);
+    color: var(--border);
+}
+
+
+.profile-div{
+    background-color: var(--bgSecondary);
+    border: 1px solid var(--border);
+}
 
 /* login, signup screens */
 .auth-div{
@@ -247,9 +479,25 @@ body{
     border-radius: 4px;
 }
 
+.auth-div p>a{
+    color: var(--primary);
+}
+
+.loading-spinner{
+    color: var(--primary) !important;
+}
+
 @media only screen and (max-width: 440px) {
     .auth-div{
         width: 96%;
         margin-top: 12px;
     }
+}
+
+
+/* extras */
+.form-control:focus{
+    box-shadow: none !important;
+    border: 1px solid var(--primary);
+    /* outline: 1.5px solid var(--primary); */
 }

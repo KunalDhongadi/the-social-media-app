@@ -1,76 +1,10 @@
-{% extends "network/layout.html" %} {% block body %} {% if userExists %}
-<div className="pb-4 border-bottom" id="userPostsDiv">
-  <!-- <div className="profile-thumbnail rounded-circle bg-secondary mt-3 mx-auto"></div>
-            <h4 className="text-center mt-2 ">{{ username }}</h4>
-            <p className="w-75 text-center mx-auto">Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati praesentium sapiente tempora, sunt a distinctio eaque mollitia architecto ad voluptate!</p>
-            <div className="d-flex justify-content-center w-75 mx-auto">
-                <p className="px-4 border-end">121 Followers</p>
-                <p className="px-4">201 Followings</p>
-            </div>
-            {% if profileOwner %}
-                <div className="d-flex justify-content-center">
-                    <button className="btn btn-outline-secondary mx-auto">Edit Profile</button>
-                </div>
-            {% else %}
-
-                {% if following %}
-                    <div className="d-flex justify-content-center">
-                        <button className="btn btn-outline-secondary mx-auto">Unfollow {{ username }}</button>
-                    </div>
-                {% else %}
-                    <div className="d-flex justify-content-center">
-                        <button className="btn btn-outline-secondary mx-auto">Follow {{ username }}</button>
-                    </div>
-                {% endif %}
-            {% endif %} -->
+{% extends "network/layout.html" %} {% block body %}
+<div className="pb-4 border-b" id="userPostsDiv">
 </div>
-<!-- {{posts}} -->
-
-<!-- {{extras1}} -->
-{% else %}
-<div>
-  <div className="profile-thumbnail rounded-circle bg-secondary mt-3 mx-auto"></div>
-  <h4 className="text-center mt-2">This user does not exists.</h4>
-</div>
-
-{% endif %}
 
 <script type="text/babel">
   const { useState } = React;
   const { useEffect } = React;
-
-  // const FollowBtn = ({userdata, setuserdata}) => {
-
-  //     const [isFollowing, setIsFollowing] = useState(false);
-
-  //     const handleFollowClick = async(event) => {
-  //         event.preventDefault();
-  //         const response = await fetch(`/follow`, {
-  //             method: 'POST',
-  //             headers: {
-  //                 'Content-Type' : 'application/json'
-  //             },
-  //             body: JSON.stringify(userdata.username)
-  //         });
-  //         if(response.ok){
-  //             const json = await response.json();
-  //             const updatedFollowers = json.followed ? userdata.followers + 1 : userdata.followers - 1;
-  //             setuserdata({ ...userdata, followers: updatedFollowers, isfollowing: !isFollowing });
-  //             setIsFollowing(!isFollowing);
-  //         }
-  //     };
-
-  //     useEffect( () => {
-  //         setIsFollowing(userdata.isfollowing);
-  //         // console.log("fsd", isFollowing);
-  //     });
-
-  //     return(
-  //         <div className="d-flex justify-content-center">
-  //             <button className="btn btn-outline-secondary rounded-pill px-4 mx-auto" onClick={handleFollowClick}>{isFollowing ? "Unfollow" : "Follow"}</button>
-  //         </div>
-  //     )
-  // }
 
   const UserStats = (isLoggedIn) => {
     const [userdata, setuserdata] = useState({});
@@ -95,14 +29,13 @@
 
     useEffect(() => {
       getUserStats();
-      console.log(userdata);
+      // console.log(userdata);
     }, []);
 
     useEffect(() => {
       setBio(userdata.bio);
       setUrl(userdata.image_url);
     }, [userdata]);
-    
 
     const addUserDetails = async () => {
       const response = await fetch(`/adduserstat`, {
@@ -114,6 +47,8 @@
       });
       const data = await response.json();
       setuserdata(data.body);
+
+      document.location.reload();
     };
 
     const onUrlChange = (e) => {
@@ -130,12 +65,20 @@
     return (
       <>
         <div className="d-flex align-items-center mt-3">
-          <img className="profile-thumbnail rounded-circle bg-secondary" src={userdata.image_url}/>
+          <img
+            className="profile-thumbnail bg-white rounded-circle"
+            src={
+              userdata.image_url != ""
+                ? userdata.image_url
+                : "/static/network/img/profile_image.png"
+            }
+            alt={userdata.username}
+          />
           {isLoggedIn.isLoggedIn && (
             <div className="d-flex ms-3 justify-content-center">
               {profileOwner ? (
                 <button
-                  className="btn btn-outline-secondary rounded-pill px-4 mx-auto"
+                  className="btn follow-btn w-auto rounded-pill px-4 mx-auto"
                   data-bs-toggle="modal"
                   data-bs-target="#userStatModal"
                 >
@@ -148,84 +91,83 @@
           )}
         </div>
 
-        <h4 className="mt-3">{userdata.username}</h4>
-        <p className="">
-          {userdata.bio}
-        </p>
+        <div className="d-flex align-items-center">
+          <h4 className="my-3">{userdata.username}</h4>
+          {userdata.follows_you && <p className="ms-2 m-0 followsback-div">Follows you</p>}
+        </div> 
+        <p className="">{userdata.bio}</p>
         <div className="d-flex">
-          <p className="pe-3 border-end">{userdata.followers} Followers</p>
+          <p className="pe-3 border-e">{userdata.followers} Followers</p>
           <p className="px-3">{userdata.followings} Followings</p>
         </div>
 
         {profileOwner && (
-        <div
-          className="modal fade"
-          id="userStatModal"
-          tabIndex="-1"
-          aria-labelledby="exampleModalLabel"
-          aria-hidden="true"
-        >
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Edit Profile</h5>
-                <button
-                  type="button"
-                  className="btn-close"
-                  data-bs-dismiss="modal"
-                  aria-label="Close"
-                ></button>
-              </div>
-              <div className="modal-body">
-                <div className="mb-3">
-                  <label htmlFor="profileImage" className="form-label">
-                    Profile Image URL
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="profileImage"
-                    value={url ? url : null}
-                    onChange={onUrlChange}
-                    required
-                  />
+          <div
+            className="modal fade"
+            id="userStatModal"
+            tabIndex="-1"
+            aria-labelledby="exampleModalLabel"
+            aria-hidden="true"
+          >
+            <div className="modal-dialog modal-dialog-centered">
+              <div className="modal-content">
+                <div className="modal-header border-0">
+                  <h5 className="modal-title">Edit Profile</h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                  ></button>
                 </div>
-                <div className="mb-3">
-                  <label htmlFor="bio" className="form-label">
-                    Bio
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="bio"
-                    value={bio ? bio : null}
-                    onChange={onBioChange}
-                    required
-                  />
+                <div className="modal-body border-0">
+                  <div className="mb-3">
+                    <label htmlFor="profileImage" className="form-label">
+                      Profile Image URL
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="profileImage"
+                      value={url ? url : null}
+                      onChange={onUrlChange}
+                      required
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="bio" className="form-label">
+                      Bio
+                    </label>
+                    <textarea
+                      className="form-control"
+                      id="bio"
+                      value={bio ? bio : null}
+                      onChange={onBioChange}
+                      required
+                    />
+                  </div>
                 </div>
-              </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-outline-secondary"
-                  data-bs-dismiss="modal"
-                >
-                  Close
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={addUserDetails}
-                  data-bs-dismiss="modal"
-                >
-                  Save changes
-                </button>
+                <div className="modal-footer border-0">
+                  <button
+                    type="button"
+                    className="the-btn px-3 m-0"
+                    data-bs-dismiss="modal"
+                  >
+                    Close
+                  </button>
+                  <button
+                    type="button"
+                    className="the-btn prim-btn px-3 m-0 ms-2"
+                    onClick={addUserDetails}
+                    data-bs-dismiss="modal"
+                  >
+                    Save changes
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        )
-      }
+        )}
       </>
     );
   };
@@ -234,8 +176,15 @@
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState("");
 
+    let userExists = "{{userExists}}";
+    if (userExists === "True") {
+      userExists = true;
+    } else {
+      userExists = false;
+    }
+
     let usernameObj = "{{username}}";
-    console.log("uuuser", typeof usernameObj);
+    // console.log("uuuser", typeof usernameObj);
 
     const getUser = async () => {
       try {
@@ -245,8 +194,6 @@
         setIsLoggedIn(data.isLoggedIn);
         setUser(data.user);
 
-        console.log("data- isloogged", isLoggedIn);
-        // isLoggedIn = data.isLoggedIn;
       } catch (error) {
         console.error("Error:", error);
       }
@@ -256,19 +203,28 @@
       getUser();
     }, []);
 
-    // console.log("posts", posts);
-    console.log("res", isLoggedIn);
-    console.log("The user is ", user);
+
+    const onBackClick = () => {
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        const { protocol, host } = window.location;
+        window.location.href = `${protocol}//${host}`;
+      }
+    };
 
     return (
       <>
-        <div className="container row mx-auto px-0">
-          <div className="col-8 left-side border-start border-end p-0">
+        <div className="container main-block px-xxl-5 row mx-auto">
+          <div className="col-8 left-side p-0">
             <div
-              className="d-flex align-items-center py-3 px-3 mb-3 posttype-div sticky-top border-bottom"
+              className="d-flex align-items-center py-3 px-3 mb-3 posttype-div sticky-top"
               id="heading-title"
             >
-              <div className="d-flex align-items-center">
+              <div
+                className="d-flex p-1 back-btn px-2 align-items-center"
+                onClick={onBackClick}
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="16"
@@ -282,22 +238,58 @@
                     d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"
                   />
                 </svg>
-                <p className="ms-2 m-0"></p>
+                <p className="ms-2 m-0">back</p>
               </div>
             </div>
 
             <div className="">
-              <div className="px-3 pb-2 mb-4 border-bottom">
-                <UserStats isLoggedIn={isLoggedIn} />
-              </div>
-              <div className="px-3">
-                <PostsBody postType={usernameObj} page_no={1} />
-              </div>
+              {userExists ? (
+                <>
+                  <div className="px-3 pb-2 mb-4 border-b">
+                    <UserStats isLoggedIn={isLoggedIn} />
+                  </div>
+                  <div className="px-3">
+                    <PostsBody postType={usernameObj} page_no={1} />
+                  </div>
+                </>
+              ) : (
+                <div className="p-3">
+                  <img
+                    className="profile-thumbnail bg-white rounded-circle"
+                    src="/static/network/img/profile_image.png"
+                  ></img>
+                  <h4 className="mt-2">The user does not exist.</h4>
+                </div>
+              )}
             </div>
           </div>
-          <div className="col-4 right-side border-end profile-end-block">
+          <div className="px-3 col-4 right-side profile-end-block">
             <div className="position-sticky top-0">
-              <ProfileBlock post_id={null} />
+              {isLoggedIn ? (
+                <ProfileBlock post_id={null} />
+              ) : isLoggedIn === false ? (
+                <div className="pt-4">
+                  <h5>You're missing out!</h5>
+                  <p>Signup or login to follow the people you like.</p>
+
+                  <a className="auth-btn d-block" href="/signup">
+                    Signup
+                  </a>
+                  <a className="auth-btn d-block mt-2" href="/login">
+                    Login
+                  </a>
+                </div>
+                
+              ) : (
+                <div className="d-flex my-3 justify-content-center">
+                  <div
+                    className="spinner-border loading-spinner text-primary"
+                    role="status"
+                  >
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -305,7 +297,8 @@
     );
   };
 
-  ReactDOM.render(<UserProfile />, document.getElementById("userPostsDiv"));
+  const root = ReactDOM.createRoot(document.getElementById("userPostsDiv"));
+  root.render(<UserProfile />);
 </script>
 
 {% endblock %}

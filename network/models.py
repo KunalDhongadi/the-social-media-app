@@ -35,13 +35,15 @@ class Post(models.Model):
         return data
     
     def deadSerialize(self, user= None):
+        user_stat = self.user.userstat.get(user=self.user)
         data = {
             "id": self.id,
             "postOwner": self.user.username,
             "post": self.body,
+            "postOwner_image": user_stat.imageUrl if user_stat else None,
             "timestamp": self.posttime.strftime("%b %d %Y, %I:%M %p"),
             "likes": self.likes.count(),
-            # "replied_to" : self.parent_post.serialize() if self.parent_post != None else None,
+            # "replied_to" : self.parent_post.user.username,
             "replyCount" : self.replies.count(),
             "styles" : self.styles
         }
@@ -76,6 +78,7 @@ class UserStat(models.Model):
         }
         if user:
             data["isfollowing"] = self.followers.filter(id=user.id).exists()
+            data["follows_you"] = self.following.filter(id=user.id).exists()
         return data
 
 # class Like(models.Model):

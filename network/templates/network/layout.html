@@ -52,30 +52,30 @@
   </head>
   <body>
     <nav
-      class="navbar navbar-expand-lg bg-body-tertiary bg-dark"
-      data-bs-theme="dark"
+      class="navbar navbar-expand-lg bg-body-tertiary the-navbar"
     >
       <div class="container">
         <div class="d-flex w-100 justify-content-between align-items-center">
-        <a class="navbar-brand fw-medium" href="{% url 'index' %}">blocks</a>
+        <a class="navbar-brand fw-medium text-white" href="{% url 'index' %}">Polaroid</a>
       
         {% if user.is_authenticated %}
           <div>
-            <button class="rounded-pill p-2 border-0" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            <div class="rounded-pill p-2 navbar-avatar" data-bs-toggle="modal" data-bs-target="#exampleModal">
               <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-person p-0" viewBox="0 0 16 16">
                 <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10Z"/>
               </svg>
-            </button>
+            </div>
 
             <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-              <div class="modal-dialog modal-sm">
+              <div class="modal-dialog modal-sm modal-dialog-centered profile-modal the-modal">
                 <div class="modal-content">
                   <div class="modal-header border-0">
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
-                  <div class="modal-body text-white">
-                    <p class="text-center p-3 pt-0 m-0 border-bottom-1">{{userdata.username}}</p>
-                    <a href={{userdata.username}} class="text-center d-block p-2 w-100">Profile</a>
+                  <div class="modal-body pt-0 text-white">
+                    <p class="fw-light text-center m-0">Logged in as</p>
+                    <p class="text-center fs-5 p-2 pt-0 m-0 border-bottom">{{userdata.username}}</p>
+                    <a href="{% url 'profile' username=userdata.username %}" class="text-center d-block p-2 w-100 border-bottom">Profile</a>
                     <a href="{% url 'logout' %}" class="text-center d-block p-2 mb-3 w-100">Logout</a>
                     
                   </div>
@@ -87,7 +87,7 @@
           </div>
         {% else %}
           <div class="d-flex">
-            <a href="{% url 'login' %}" class="auth-btn navbar-login-btn">Login/ Signup</a>
+            <a href="{% url 'login' %}" class="navbar-login-btn">Login</a>
           </div>
         {% endif %}
       </div>
