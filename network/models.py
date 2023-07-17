@@ -3,6 +3,7 @@ from django.db import models
 from django.db.models import JSONField
 
 
+
 class User(AbstractUser):
     pass
 
@@ -22,7 +23,8 @@ class Post(models.Model):
             "postOwner": self.user.username,
             "post" : self.body,
             "postOwner_image": user_stat.imageUrl if user_stat else None,
-            "timestamp": self.posttime.strftime("%b %d %Y, %I:%M %p"),
+            # "timestamp": self.posttime.strftime("%b %d %Y, %I:%M %p"),
+            "timestamp": self.posttime,
             "likes": self.likes.count(),
             "replied_to" : self.parent_post.serialize(user) if self.parent_post != None else None,
             "replies" :[reply.deadSerialize(user) for reply in self.replies.all()] if self.replies != None else None,
@@ -41,7 +43,8 @@ class Post(models.Model):
             "postOwner": self.user.username,
             "post": self.body,
             "postOwner_image": user_stat.imageUrl if user_stat else None,
-            "timestamp": self.posttime.strftime("%b %d %Y, %I:%M %p"),
+            # "timestamp": self.posttime.strftime("%b %d %Y, %I:%M %p"),
+            "timestamp": self.posttime,
             "likes": self.likes.count(),
             # "replied_to" : self.parent_post.user.username,
             "replyCount" : self.replies.count(),
@@ -74,7 +77,8 @@ class UserStat(models.Model):
             "bio": self.bio,
             "image_url" : self.imageUrl,
             "followers": self.followers.count(),
-            "followings": self.following.count() 
+            "followings": self.following.count(), 
+            "post_count" : Post.objects.filter(user=self.user).count()
         }
         if user:
             data["isfollowing"] = self.followers.filter(id=user.id).exists()

@@ -38,9 +38,9 @@ const AddPost = ({ posts, setPosts, parent }) => {
     // console.log("all posts tog", posts);
     // console.log("this", json.body);
     let p = json.body;
-    if(posts.length === 10){
+    if (posts.length === 10) {
       setPosts((posts) => [p, ...posts.slice(0, -1)]); //If a post is added, remove the last one, need to keep only 10(multiple of 10) posts.
-    }else{
+    } else {
       setPosts((posts) => [p, ...posts]);
     }
     setValue("");
@@ -66,7 +66,7 @@ const AddPost = ({ posts, setPosts, parent }) => {
   return (
     <form
       action="post"
-      className="py-3 addPostDiv rounded-2 mb-3"
+      className="py-3 addPostDiv"
       id="addpost"
       onSubmit={handleSubmit}
     >
@@ -81,7 +81,7 @@ const AddPost = ({ posts, setPosts, parent }) => {
           onChange={handleChange}
           placeholder={`${parent ? "Add a reply" : "What's going on?"}`}
           id="post-body"
-          onClick={() => setShowExtras(true)}
+          // onClick={() => setShowExtras(true)}
         />
         <input
           type="submit"
@@ -135,6 +135,7 @@ const PostItem = ({
   const [likes, setLikes] = useState(post.likes);
   const [replyCount, setReplyCount] = useState(post.replyCount);
   const [isLiked, setIsLiked] = useState(post.isLiked);
+  const [isDeleted, setIsDeleted] = useState(false);
 
   const { protocol, host } = window.location;
   const rootUrl = `${protocol}//${host}`;
@@ -159,7 +160,7 @@ const PostItem = ({
       } else {
         setLikes(likes + 1);
       }
-    }else{
+    } else {
       setIsLiked(!isLiked);
     }
   };
@@ -178,44 +179,40 @@ const PostItem = ({
     if (response.ok) {
       const json = await response.json();
       if (json.deleted) {
-
-        // if the post is opened on a separate page, and then deleted, go to home
-        if(isOpened){
+        // if the post is opened on a separate page, go to homepage or previous page
+        if (isOpened) {
           if (window.history.length > 1) {
             window.history.back();
           } else {
             const { protocol, host } = window.location;
             window.location.href = `${protocol}//${host}`;
           }
-        }else{
-          const postDiv = event.target.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement;
+        } else {
+          // const postDiv = event.target.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement;
           // console.log("pos", postDiv);
           // setReplyCount(replyCount )
-          postDiv.style.animationPlayState = "running";
-          postDiv.addEventListener(
-            "animationend",
-            () => {
-              setPosts(posts.filter((p) => p.id !== post.id));
-            }
-          );
+          // postDiv.style.animationPlayState = "running";
+          // postDiv.addEventListener(
+          //   "animationend",
+          //   () => {
+          //     setPosts(posts.filter((p) => p.id !== post.id));
+          //   }
+          // );
+          // setPosts(posts.filter((p) => p.id !== post.id));
+          setIsDeleted(true);
         }
-        
-
-        // setPosts(posts.filter((p) => p.id !== post.id));
-        
       }
     }
   };
 
   useEffect(() => {
     setReplyCount(post.replyCount);
-  }, [post])
-  
+  }, [post]);
 
   // console.log({currentUser});
 
   const formatDateTime = (timestamp) => {
-    timestamp = new Date(timestamp).toISOString();
+    // timestamp = new Date(timestamp).toISOString();
     // console.log("t1", timestamp);
     const now = new Date();
     // console.log("t1 now", now);
@@ -262,13 +259,23 @@ const PostItem = ({
     e.stopPropagation();
   };
 
+  if (isDeleted) {
+    return (
+      <>
+        <div className="d-flex justify-content-center align-items-center py-5 border-b">
+          <p className="m-0">This post is deleted.</p>
+        </div>
+      </>
+    );
+  }
+
   return (
     <div
-      className={`post-div rounded-2 mb-3 ${isOpened && "post-page"}`}
+      className={`post-div ${isOpened && "post-page"}`}
       id="postDiv"
       onClick={!isOpened ? onPostClick : null}
     >
-      <div className="d-flex p-3 pb-4">
+      <div className="d-flex p-3">
         <div className="flex-grow-1">
           <div className="d-flex">
             <img
@@ -299,7 +306,7 @@ const PostItem = ({
                     onClick={onPostDeleteClick}
                   >
                     <p className="m-0">Delete</p>
-                    <svg
+                    {/* <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="16"
                       height="16"
@@ -308,8 +315,38 @@ const PostItem = ({
                       viewBox="0 0 16 16"
                     >
                       <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
-                    </svg>
+                    </svg> */}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-trash3" viewBox="0 0 16 16">
+  <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z"/>
+</svg>
                   </div>
+{/* 
+                  <div className="dropdown">
+                    <button
+                      className="btn btn-secondary dropdown-toggle"
+                      type="button"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        className="bi bi-three-dots"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
+                      </svg>
+                    </button>
+                    <ul className="dropdown-menu">
+                      <li>
+                        <a className="dropdown-item" href="#">
+                          Delete
+                        </a>
+                      </li>
+                    </ul>
+                  </div> */}
 
                   {/* <div
                     className="modal fade"
@@ -382,7 +419,7 @@ const PostItem = ({
                   d="M1.146 4.854a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 4H12.5A2.5 2.5 0 0 1 15 6.5v8a.5.5 0 0 1-1 0v-8A1.5 1.5 0 0 0 12.5 5H2.707l3.147 3.146a.5.5 0 1 1-.708.708l-4-4z"
                 />
               </svg>
-              <p className="m-0 ms-2" style={{"fontSize" : "14px"}}>
+              <p className="m-0 ms-2" style={{ fontSize: "14px" }}>
                 Replied to{" "}
                 <span className="fw-medium">{post.replied_to.postOwner}</span>
               </p>
@@ -390,17 +427,17 @@ const PostItem = ({
           )}
 
           <div
-            className="rounded-2 border-2-secondary my-2 post-body d-flex justify-content-center align-items-center "
-            style={post.styles}
+            className="my-2 post-body"
+            
           >
-            <p className="m-0">{post.post}</p>
+            <p className="m-0 py-2">{post.post}</p>
           </div>
 
           <div className="d-flex">
             <div className="d-flex align-items-center postBtnsBody">
               {isLoggedIn && (
                 <div
-                  className="post-btn likeBtn rounded-circle d-flex justify-content-center align-items-center"
+                  className="post-btn likeBtn rounded-circle d-flex justify-content-center align-items-center me-2"
                   onClick={handleLikeClick}
                 >
                   {isLiked ? (
@@ -433,14 +470,15 @@ const PostItem = ({
               )}
             </div>
             {(likes > 0 || replyCount > 0) && (
-              <div className="d-flex w-100 ms-2 align-items-center">
+              <div className="d-flex w-100 align-items-center">
                 {likes > 0 && (
-                  <p className="m-0 me-2 fs-6">
+                  <p className="m-0 fs-6 text-secondary">
                     {likes > 1 ? `${likes} Likes` : `${likes} Like`}
                   </p>
                 )}
                 {replyCount > 0 && (
-                  <p className="m-0 flex-grow-1 text-end fs-6">
+                  <p className="m-0 flex-grow-1 fs-6 text-secondary">
+                    {likes > 0  && ", "}
                     {replyCount > 1
                       ? `${replyCount} Replies`
                       : `${replyCount} Reply`}
@@ -524,11 +562,11 @@ const PostsBody = ({ postType, page_no }) => {
   }, [page]);
 
   useEffect(() => {
-    if(isfetch){
+    if (isfetch) {
       getAllPosts(postType, page);
       setIsFetch(false);
     }
-  }, [isfetch])
+  }, [isfetch]);
 
   // console.log("posts", posts);
   // console.log("res",pageData);
@@ -579,23 +617,21 @@ const PostsBody = ({ postType, page_no }) => {
       <div className="">
         {posts.map((post, index) => {
           // console.log("post length-", post.length, " and index is ", index);
-          if(index === posts.length - 4){
-          return (
-            
-            <div key={post.id} ref={targetRef}>
-              <PostItem
-                post={post}
-                isLoggedIn={isLoggedIn}
-                isOpened={false}
-                currentUser={currentUser}
-                posts={posts}
-                setPosts={setPosts}
-              />
-            </div>
-          );
-          }else{
+          if (index === posts.length - 4) {
             return (
-            
+              <div key={post.id} ref={targetRef}>
+                <PostItem
+                  post={post}
+                  isLoggedIn={isLoggedIn}
+                  isOpened={false}
+                  currentUser={currentUser}
+                  posts={posts}
+                  setPosts={setPosts}
+                />
+              </div>
+            );
+          } else {
+            return (
               <div key={post.id}>
                 <PostItem
                   post={post}
@@ -612,9 +648,12 @@ const PostsBody = ({ postType, page_no }) => {
       </div>
       {isLoading && (
         <div className="d-flex my-3 justify-content-center">
-        <div className="spinner-border loading-spinner text-primary" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
+          <div
+            className="spinner-border loading-spinner text-primary"
+            role="status"
+          >
+            <span className="visually-hidden">Loading...</span>
+          </div>
         </div>
       )}
 

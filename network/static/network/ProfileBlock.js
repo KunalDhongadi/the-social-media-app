@@ -1,9 +1,11 @@
 const Profile = ({ profile }) => {
 
 const [profileObj, setProfileObj] = useState(profile);
+const { protocol, host } = window.location;
+const rootUrl = `${protocol}//${host}`;
 
   return (
-    <div className="profile-div rounded-2 mb-3">
+    <div className="profile-div">
       <div className="d-flex p-3 justify-content-between align-items-center">
         <img className="post-profile-thumbnail bg-white rounded-circle "
         src={profileObj.image_url != "" ? profileObj.image_url : '/static/network/img/profile_image.png'} alt={profileObj.username}
@@ -14,7 +16,7 @@ const [profileObj, setProfileObj] = useState(profile);
       <div>
         <div className="d-flex align-items-center">
         <p className="post-profile-title fw-bold m-0 ps-3 pe-2 py-0">
-          <a href={profileObj.username}>{profileObj.username}</a>
+          <a href={`${rootUrl}/${profileObj.username}`}>{profileObj.username}</a>
         </p>
           {profileObj.follows_you && <p className="m-0 followsback-div">Follows you</p>}
         </div> 
@@ -71,15 +73,19 @@ const ProfileBlock = ({ post_id }) => {
 
   return (
     <>
-      <h3 className="py-3 fs-6">{postId ? "Relevant People" : "Suggested for you"}</h3>
+      <div className="profile-list-div pt-3">
+      <h3 className="p-3 ps-0 pt-0 fs-6">{postId ? "Relevant People" : "Suggested for you"}</h3>
       {profiles &&
-        profiles.map((profile) => {
+        profiles.map((profile, index) => {
+          const isFirstChild = index === 0;
+          const isLastChild = index === profiles.length - 1;
           return (
-            <div key={profile.id}>
+            <div key={profile.id} className={`profile-wrapper${isFirstChild ? ' first-child' : ''}${isLastChild ? ' last-child' : ''}`}>
               <Profile profile={profile}/>
             </div>
           );
         })}
+      </div>
     </>
   );
 };

@@ -8,6 +8,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
+from django.utils import timezone
 
 from .models import Post,User,UserStat
 
@@ -90,15 +91,18 @@ def getRelevantUsers(request):
     postObj = post.serialize()
     postOwner = postObj.get("postOwner")
 
-    userObj = User.objects.get(username = postOwner)
-    userStatObj = UserStat.objects.get(user = userObj)
-    relevantUsers.append(userStatObj.serialize())
+    if not request.user.username == postOwner:
+        userObj = User.objects.get(username = postOwner)
+        userStatObj = UserStat.objects.get(user = userObj)
+
+        relevantUsers.append(userStatObj.serialize(request.user))
 
     if(postObj.get("replied_to")):
 
         repliedToUser = User.objects.get(username= postObj.get("replied_to").get("postOwner"))
-        repliedUserStat = UserStat.objects.get(user=repliedToUser)
-        relevantUsers.append(repliedUserStat.serialize(request.user))
+        if not repliedToUser == request.user.username:
+            repliedUserStat = UserStat.objects.get(user=repliedToUser)
+            relevantUsers.append(repliedUserStat.serialize(request.user))
 
 
         # for reply in postObj.get("replies"):
@@ -279,6 +283,7 @@ def addPost(request):
         parentPost = Post.objects.get(id=data["parent"])
         post.parent_post = parentPost
     post.posttime = datetime.datetime.now()
+    # post.posttime = timezone.localtime()
     post.save()
 
     data = {

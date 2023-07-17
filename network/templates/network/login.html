@@ -1,6 +1,7 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
+    <div style="height: 100vh;">
     <div class="container auth-div">
 
         <h4 class="my-3">Login</h4>
@@ -31,4 +32,5 @@
         <a class="auth-btn d-block" href="{% url 'guestLogin' %}">Continue as Guest</a>
     </div>
 
+</div>
 {% endblock %}

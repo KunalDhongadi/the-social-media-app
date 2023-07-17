@@ -98,7 +98,8 @@
         <p className="">{userdata.bio}</p>
         <div className="d-flex">
           <p className="pe-3 border-e">{userdata.followers} Followers</p>
-          <p className="px-3">{userdata.followings} Followings</p>
+          <p className="px-3 border-e">{userdata.followings} Followings</p>
+          <p className="px-3">{userdata.post_count} {userdata.post_count === 1 ? "post" : "posts"}</p>
         </div>
 
         {profileOwner && (
@@ -129,7 +130,7 @@
                       type="text"
                       className="form-control"
                       id="profileImage"
-                      value={url ? url : null}
+                      value={url ? url : ""}
                       onChange={onUrlChange}
                       required
                     />
@@ -141,7 +142,7 @@
                     <textarea
                       className="form-control"
                       id="bio"
-                      value={bio ? bio : null}
+                      value={bio ? bio : ""}
                       onChange={onBioChange}
                       required
                     />
@@ -150,7 +151,7 @@
                 <div className="modal-footer border-0">
                   <button
                     type="button"
-                    className="the-btn px-3 m-0"
+                    className="rounded-pill btn btn-light px-3 m-0"
                     data-bs-dismiss="modal"
                   >
                     Close
@@ -175,6 +176,7 @@
   const UserProfile = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState("");
+
 
     let userExists = "{{userExists}}";
     if (userExists === "True") {
@@ -215,8 +217,8 @@
 
     return (
       <>
-        <div className="container main-block px-xxl-5 row mx-auto">
-          <div className="col-8 left-side p-0">
+        <div className="container main-block px-xxl-5 row mx-auto justify-content-center">
+          <div className="col-lg-6 col-8 left-side p-0">
             <div
               className="d-flex align-items-center py-3 px-3 mb-3 posttype-div sticky-top"
               id="heading-title"
@@ -245,10 +247,11 @@
             <div className="">
               {userExists ? (
                 <>
-                  <div className="px-3 pb-2 mb-4 border-b">
+                  <div className="px-3 pb-2 border-b">
                     <UserStats isLoggedIn={isLoggedIn} />
                   </div>
-                  <div className="px-3">
+                  <div className="">
+                    <p className="p-3 m-0 border-b fw-medium text-secondary">Posts from {usernameObj}</p>
                     <PostsBody postType={usernameObj} page_no={1} />
                   </div>
                 </>
@@ -263,8 +266,8 @@
               )}
             </div>
           </div>
-          <div className="px-3 col-4 right-side profile-end-block">
-            <div className="position-sticky top-0">
+          <div className="col-lg-3 col-4 right-side">
+            <div className="sticky-top right-side-div mt-2">
               {isLoggedIn ? (
                 <ProfileBlock post_id={null} />
               ) : isLoggedIn === false ? (
@@ -278,6 +281,8 @@
                   <a className="auth-btn d-block mt-2" href="/login">
                     Login
                   </a>
+                  <p className="text-center m-0">or</p>
+                  <a className="auth-btn d-block mt-2" href="{% url 'guestLogin' %}">Continue as Guest</a>
                 </div>
                 
               ) : (

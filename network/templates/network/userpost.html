@@ -84,25 +84,30 @@
           // <AddReply replies={replies} setReplies={setReplies} parent={parent}/>
         )}
         {replies && replies.length > 0 &&
-        <h5 className="my-4 fs-6">Post replies</h5>
+        <h5 className="fs-6 p-3 border-b m-0 text-secondary">Post replies</h5>
         }
 
         <div className="">
           {replies &&
-            replies.map((reply) => {
-              return (
-                <div key={reply.id}>
-                  <PostItem
-                    post={reply}
-                    isLoggedIn={isLoggedIn}
-                    isOpened={false}
-                    currentUser={currentUser}
-                    posts={replies}
-                    setPosts={setReplies}
-                  />
-                </div>
-              );
-            })}
+            replies.length > 0 ?
+              (replies.map((reply) => {
+                return (
+                  <div key={reply.id}>
+                    <PostItem
+                      post={reply}
+                      isLoggedIn={isLoggedIn}
+                      isOpened={false}
+                      currentUser={currentUser}
+                      posts={replies}
+                      setPosts={setReplies}
+                    />
+                  </div>
+                );
+              }))
+            :
+            <p className="p-3">No replies on this post yet.</p>
+
+          }
         </div>
       </>
     );
@@ -158,10 +163,10 @@
 
     return (
       <>
-        <div className="container px-xxl-5 main-block row mx-auto">
-          <div className="col-8 left-side  p-0">
+        <div className="container px-xxl-5 main-block row mx-auto justify-content-center">
+          <div className="col-8 col-lg-6 left-side  p-0">
             <div
-              className="d-flex align-items-center py-3 px-3 mb-3 posttype-div sticky-top"
+              className="d-flex align-items-center py-3 px-3 posttype-div sticky-top"
               id="heading-title"
             >
               <div className="d-flex p-1 back-btn px-2 align-items-center" onClick={onBackClick}>
@@ -182,13 +187,13 @@
               </div>
             </div>
 
-            <div className="px-3">
+            <div className="">
               {postObj && postExists ?
                 (
                 <PostItem post={postObj} isLoggedIn={isLoggedIn} isOpened={true} currentUser={currentuser}/>
               )
               :
-              <h4 className="fs-6 my-4">The post does not exist.</h4>
+              <h4 className="fs-6 my-4 p-3">The post does not exist.</h4>
               }
 
  
@@ -205,9 +210,9 @@
             </div>
           </div>
 
-          <div className="px-3 col-4 right-side profile-end-block">
-            <div className="position-sticky top-0">
-              {isLoggedIn && postExists ? <ProfileBlock post_id={post_id}/>
+          <div className="px-3 col-lg-3 col-4 right-side">
+            <div className="sticky-top right-side-div mt-2">
+              {isLoggedIn ? postExists ? <ProfileBlock post_id={post_id}/> : <div></div>
               :
               <div className="pt-4">
                 <h5>You're missing out!</h5>
