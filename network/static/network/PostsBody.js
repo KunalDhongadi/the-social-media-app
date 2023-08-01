@@ -224,7 +224,6 @@ const PostItem = ({
         year: 'numeric',
     
       });
-      console.log("f", new_timestamp)
       return new_timestamp;
     }else{
       const now = new Date();
