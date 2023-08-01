@@ -6,6 +6,7 @@ const FollowBtn = ({userdata, setuserdata}) => {
 
     const handleFollowClick = async(event) => {
         event.preventDefault();
+        setIsFollowing(!isFollowing);
         const response = await fetch(`/follow`, {
             method: 'POST',
             headers: {
@@ -17,7 +18,6 @@ const FollowBtn = ({userdata, setuserdata}) => {
             const json = await response.json();
             const updatedFollowers = json.followed ? userdata.followers + 1 : userdata.followers - 1;
             setuserdata({ ...userdata, followers: updatedFollowers, isfollowing: !isFollowing });
-            setIsFollowing(!isFollowing);
         }
     };
 

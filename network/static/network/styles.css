@@ -121,7 +121,7 @@ body{
 
 
 .addPostDiv{
-    background-color: rgb(235, 235, 235);
+    background-color: #ebeff3;
     border-bottom: 1px solid var(--border);
 }
 
@@ -317,9 +317,18 @@ body{
     animation-play-state: paused; */
 }
 
-.post-div:hover{
-    background-color: var(--bgHoverColor);
-    /* background: rgba(0,0,0,.5); */
+@media (hover: hover) {
+    .post-div:hover{
+        background-color: var(--bgHoverColor);
+        /* background: rgba(0,0,0,.5); */
+    }
+}
+
+@media (hover: none) {
+    .post-div:focus{
+        background-color: var(--bgHoverColor);
+        /* background: rgba(0,0,0,.5); */
+    }
 }
 
 .post-page{
@@ -378,15 +387,17 @@ body{
     border: 1px solid var(--border);
 }
 
-.post-btn:hover{
-    background-color: var(--grayColor);
+@media (hover: hover) {
+    .post-btn:hover{
+        background-color: var(--grayColor);
+    }
+    .post-btn:hover .bi{
+        fill: var(--primary);
+        scale: 1.2;
+        transition: 0.4s;
+    }
 }
 
-.post-btn:hover .bi{
-    fill: var(--primary);
-    scale: 1.2;
-    transition: 0.4s;
-}
 
 /* like btn */
 .liked-btn{

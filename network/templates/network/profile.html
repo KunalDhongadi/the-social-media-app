@@ -1,6 +1,5 @@
 {% extends "network/layout.html" %} {% block body %}
-<div className="pb-4 border-b" id="userPostsDiv">
-</div>
+<div className="pb-4 border-b" id="userPostsDiv"></div>
 
 <script type="text/babel">
   const { useState } = React;
@@ -93,13 +92,17 @@
 
         <div className="d-flex align-items-center">
           <h4 className="my-3">{userdata.username}</h4>
-          {userdata.follows_you && <p className="ms-2 m-0 followsback-div">Follows you</p>}
-        </div> 
+          {userdata.follows_you && (
+            <p className="ms-2 m-0 followsback-div">Follows you</p>
+          )}
+        </div>
         <p className="">{userdata.bio}</p>
         <div className="d-flex">
           <p className="pe-3 border-e">{userdata.followers} Followers</p>
           <p className="px-3 border-e">{userdata.followings} Followings</p>
-          <p className="px-3">{userdata.post_count} {userdata.post_count === 1 ? "post" : "posts"}</p>
+          <p className="px-3">
+            {userdata.post_count} {userdata.post_count === 1 ? "post" : "posts"}
+          </p>
         </div>
 
         {profileOwner && (
@@ -174,9 +177,8 @@
   };
 
   const UserProfile = () => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState();
     const [user, setUser] = useState("");
-
 
     let userExists = "{{userExists}}";
     if (userExists === "True") {
@@ -195,7 +197,6 @@
 
         setIsLoggedIn(data.isLoggedIn);
         setUser(data.user);
-
       } catch (error) {
         console.error("Error:", error);
       }
@@ -204,7 +205,6 @@
     useEffect(() => {
       getUser();
     }, []);
-
 
     const onBackClick = () => {
       if (window.history.length > 1) {
@@ -251,7 +251,9 @@
                     <UserStats isLoggedIn={isLoggedIn} />
                   </div>
                   <div className="">
-                    <p className="p-3 m-0 border-b fw-medium text-secondary">Posts from {usernameObj}</p>
+                    <p className="p-3 m-0 border-b fw-medium text-secondary">
+                      Posts from {usernameObj}
+                    </p>
                     <PostsBody postType={usernameObj} page_no={1} />
                   </div>
                 </>
@@ -268,9 +270,8 @@
           </div>
           <div className="col-lg-3 col-4 right-side">
             <div className="sticky-top right-side-div mt-2">
-              {isLoggedIn ? (
-                <ProfileBlock post_id={null} />
-              ) : isLoggedIn === false ? (
+              {isLoggedIn && <ProfileBlock post_id={null} />}
+              {isLoggedIn === false && (
                 <div className="pt-4">
                   <h5>You're missing out!</h5>
                   <p>Signup or login to follow the people you like.</p>
@@ -282,20 +283,16 @@
                     Login
                   </a>
                   <p className="text-center m-0">or</p>
-                  <a className="auth-btn d-block mt-2" href="{% url 'guestLogin' %}">Continue as Guest</a>
-                </div>
-                
-              ) : (
-                <div className="d-flex my-3 justify-content-center">
-                  <div
-                    className="spinner-border loading-spinner text-primary"
-                    role="status"
+                  <a
+                    className="auth-btn d-block mt-2"
+                    href="{% url 'guestLogin' %}"
                   >
-                    <span className="visually-hidden">Loading...</span>
-                  </div>
+                    Continue as Guest
+                  </a>
                 </div>
               )}
             </div>
+            <a href="https://kunal-dhongadi.vercel.app/" className="position-fixed bottom-0 py-2 text-secondary opacity-25">by @Kunal</a>
           </div>
         </div>
       </>

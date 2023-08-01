@@ -40,51 +40,59 @@
     return (
       <>
         <div className="container px-xxl-5 main-block row mx-auto justify-content-center">
-   
-            <div className="col-8 col-lg-6 left-side p-0 ">
-              <div
-                className="d-flex align-items-center py-3 px-3 posttype-div sticky-top"
-                id="heading-title"
+          <div className="col-8 col-lg-6 left-side p-0 ">
+            <div
+              className="d-flex align-items-center py-3 px-3 posttype-div sticky-top"
+              id="heading-title"
+            >
+              <h5
+                className={`m-0 px-3 p-2 ${isAll && "selected-postType"}`}
+                onClick={onAllPostsSelected}
               >
+                All posts
+              </h5>
+              {isLoggedIn && (
                 <h5
-                  className={`m-0 px-3 p-2 ${isAll && "selected-postType"}`}
-                  onClick={onAllPostsSelected}
+                  className={`m-0 px-3 p-2 ms-2 ${
+                    !isAll && "selected-postType"
+                  }`}
+                  onClick={onFollowingPostsSelected}
                 >
-                  All posts
+                  Following
                 </h5>
-                {isLoggedIn && (
-                  <h5
-                    className={`m-0 px-3 p-2 ms-2 ${
-                      !isAll && "selected-postType"
-                    }`}
-                    onClick={onFollowingPostsSelected}
-                  >
-                    Following
-                  </h5>
-                )}
-              </div>
+              )}
+            </div>
 
-              <div className="post-list-body">
-                <PostsBody postType={isAll ? "all" : "following"} page_no={0} />
-              </div>
-
-
-              </div>
-              <div className="col-4 col-lg-3 px-3 right-side">
-              <div className="sticky-top right-side-div mt-2">
-                {isLoggedIn ? <ProfileBlock post_id={null}/>
-                :
+            <div className="post-list-body">
+              <PostsBody postType={isAll ? "all" : "following"} page_no={0} />
+            </div>
+          </div>
+          <div className="col-4 col-lg-3 px-3 right-side">
+            <div className="sticky-top right-side-div mt-2">
+              {isLoggedIn && <ProfileBlock post_id={null} />}
+              {isLoggedIn === false && (
                 <div className="pt-4">
                   <h5>You're missing out!</h5>
-                  <p>Signup or login to follow the people you like.</p>  
+                  <p>Signup or login to follow the people you like.</p>
 
-                  <a className="auth-btn d-block" href="/signup">Signup</a>
-                  <a className="auth-btn d-block mt-2" href="/login">Login</a>
+                  <a className="auth-btn d-block" href="/signup">
+                    Signup
+                  </a>
+                  <a className="auth-btn d-block mt-2" href="/login">
+                    Login
+                  </a>
                   <p className="text-center m-0">or</p>
-                  <a className="auth-btn d-block mt-2" href="{% url 'guestLogin' %}">Continue as Guest</a>
+                  <a
+                    className="auth-btn d-block mt-2"
+                    href="{% url 'guestLogin' %}"
+                  >
+                    Continue as Guest
+                  </a>
                 </div>
-              }
-              </div>
+              )}
+            </div>
+            <a href="https://kunal-dhongadi.vercel.app/" className="position-fixed bottom-0 py-2 text-secondary opacity-25">by @Kunal</a>
+
           </div>
         </div>
       </>

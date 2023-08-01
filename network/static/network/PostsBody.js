@@ -211,34 +211,45 @@ const PostItem = ({
 
   // console.log({currentUser});
 
-  const formatDateTime = (timestamp) => {
+  const formatDateTime = (timestamp, isPostPage) => {
     // timestamp = new Date(timestamp).toISOString();
     // console.log("t1", timestamp);
-    const now = new Date();
-    // console.log("t1 now", now);
-
+   
     const date = new Date(timestamp);
 
-    // console.log("t1 data", date);
-    const diff = Math.round((now - date) / 1000);
-    const minute = 60;
-    const hour = minute * 60;
-    const day = hour * 24;
-    const month = day * 30;
-    const year = month * 12;
+    if(isPostPage){
+      let new_timestamp = date.toLocaleDateString([],{
+        month: 'short', // Display the abbreviated month name (e.g., "Jul")
+        day: 'numeric',
+        year: 'numeric',
+    
+      });
+      console.log("f", new_timestamp)
+      return new_timestamp;
+    }else{
+      const now = new Date();
 
-    if (diff < minute) {
-      return diff + "s ago";
-    } else if (diff < hour) {
-      return Math.round(diff / minute) + "m ago";
-    } else if (diff < day) {
-      return Math.round(diff / hour) + "h ago";
-    } else if (diff < month) {
-      return Math.round(diff / day) + "d ago";
-    } else if (diff < year) {
-      return Math.round(diff / month) + "mo ago";
-    } else {
-      return Math.round(diff / year) + "y ago";
+       // console.log("t1 data", date);
+      const diff = Math.round((now - date) / 1000);
+      const minute = 60;
+      const hour = minute * 60;
+      const day = hour * 24;
+      const month = day * 30;
+      const year = month * 12;
+
+      if (diff < minute) {
+        return diff + "s ago";
+      } else if (diff < hour) {
+        return Math.round(diff / minute) + "m ago";
+      } else if (diff < day) {
+        return Math.round(diff / hour) + "h ago";
+      } else if (diff < month) {
+        return Math.round(diff / day) + "d ago";
+      } else if (diff < year) {
+        return Math.round(diff / month) + "mo ago";
+      } else {
+        return Math.round(diff / year) + "y ago";
+      }
     }
   };
 
@@ -288,13 +299,13 @@ const PostItem = ({
               alt={post.postOwner}
             />
             <div className="d-flex justify-content-between align-items-center flex-grow-1 ms-2">
-              <div className="d-flex">
+              <div className="d-flex align-items-end">
                 <p className="post-profile-title fw-bold m-0">
                   <a href={`${rootUrl}/${post.postOwner}`}>{post.postOwner}</a>
                 </p>
-                <p className="fw-regular m-0">
+                <p className="fw-regular m-0" style={{fontSize:14}}>
                   <span className="mx-2">•</span>
-                  {formatDateTime(post.timestamp)}
+                  {formatDateTime(post.timestamp, isOpened)}
                 </p>
               </div>
               {post.postOwner === currentUser ? (
@@ -520,7 +531,6 @@ const PostsBody = ({ postType, page_no }) => {
         setObserve(false);
         setIsLoading(false);
         // console.log("observe set to false");
-        return;
       }
 
       const { allPosts, isLoggedIn, currentUser } = data;
