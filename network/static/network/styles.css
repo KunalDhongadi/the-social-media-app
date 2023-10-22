@@ -121,7 +121,7 @@ body{
 
 
 .addPostDiv{
-    background-color: #e4e9ed;
+    background-color: #ebeff3;
     border-bottom: 1px solid var(--border);
 }
 
@@ -325,7 +325,7 @@ body{
 }
 
 @media (hover: none) {
-    .post-div:active{
+    .post-div:focus{
         background-color: var(--bgHoverColor);
         /* background: rgba(0,0,0,.5); */
     }
