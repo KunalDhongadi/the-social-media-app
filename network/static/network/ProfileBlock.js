@@ -123,7 +123,7 @@ const ProfileBlock = ({ post_id }) => {
           ) : (
             <p className="m-0">
               {isSuggested &&
-                "No suggested users for you! (You literally follow every person on this app)"}
+                "No suggested users for you! (You literally follow every person on this app or you're the only one here.)"}
             </p>
           ))}
       </div>
